@@ -1,28 +1,27 @@
 import * as React from "react";
-import { TrainingMode } from "./training";
+import { TrainingModeType } from "./training";
 
 interface TTSHeaderProps {
-    supportedModes: TrainingMode[];
-    onModeChosen?: (mode: TrainingMode) => void;
+    supportedModes: TrainingModeType[];
+    activeMode: TrainingModeType;
+    onModeChosen?: (mode: TrainingModeType) => void;
     onStart?: () => void;
     onPause?: () => void;
-    onReset?: () => void;
 }
 
 interface TTSHeaderState {
     menuOpen: boolean;
-    activeModeIndex: number;
 }
 
-function TrainingModeDropdown(props: { supportedModes: TrainingMode[], activeModeIndex: number, onClick?: (modeIndex: number) => void }) {
+function TrainingModeDropdown(props: { supportedModes: TrainingModeType[], activeModeIndex: number, onClick?: (modeIndex: number) => void }) {
     return <div className="header-item complex-content primary clickable">
         <div className="dropdown">
 			{props.supportedModes.map((mode, index) => {
                 const primary = index == props.activeModeIndex ? " primary" : "";
                 if (props.onClick) {
-                    return <span className={"dropdown-item" + primary} onClick={() => props.onClick(index)} > {mode}</span>;
+                    return <span key={mode} className={"dropdown-item" + primary} onClick={() => props.onClick(index)} > {mode}</span>;
                 } else {
-                    return <span className={"dropdown-item" + primary}> {mode}</span>;
+                    return <span key={mode} className={"dropdown-item" + primary}> {mode}</span>;
                 }
 			})}
         </div>
@@ -34,21 +33,18 @@ export class TTSHeader extends React.PureComponent<TTSHeaderProps, TTSHeaderStat
     constructor(props: TTSHeaderProps) {
         super(props);
         this.state = {
-            menuOpen: true,
-            activeModeIndex: 0
+            menuOpen: false
         };
         this.onModeChosen = this.onModeChosen.bind(this);
         this.onMenuOpen = this.onMenuOpen.bind(this);
     }
 
     private onModeChosen(modeIndex: number) {
+        if (this.props.onModeChosen && this.props.supportedModes[modeIndex] != this.props.activeMode) {
+            this.props.onModeChosen(this.props.supportedModes[modeIndex]);
+        }
         this.setState({
-            activeModeIndex: modeIndex,
             menuOpen: false
-        }, () => {
-            if (this.props.onModeChosen) {
-                this.props.onModeChosen(this.props.supportedModes[this.state.activeModeIndex]);
-            }
         });
     }
 
@@ -59,18 +55,22 @@ export class TTSHeader extends React.PureComponent<TTSHeaderProps, TTSHeaderStat
     }
 
     public render() {
+        const activeModeIndex = this.props.supportedModes.indexOf(this.props.activeMode);
         return <div className="header">
             <div className="header-item">
                 <span className="header-item-content">TTS</span>
             </div>
             {this.state.menuOpen ?
-                <TrainingModeDropdown activeModeIndex={this.state.activeModeIndex} supportedModes={this.props.supportedModes}
+                <TrainingModeDropdown activeModeIndex={activeModeIndex} supportedModes={this.props.supportedModes}
                     onClick={this.onModeChosen} /> :
-                <div className="header-item clickable primary" onClick={event => this.onMenuOpen()}>
-                    <span className="header-item-content">{this.props.supportedModes[this.state.activeModeIndex]}</span>
+                <div className="header-item clickable primary" onClick={this.onMenuOpen}>
+                    <span className="header-item-content">{this.props.supportedModes[activeModeIndex]}</span>
                 </div>}
-            <div className="header-item">
+            <div className="header-item clickable" onClick={this.props.onStart} >
                 <span className="header-item-content">Start</span>
+            </div>
+            <div className="header-item clickable" onClick={this.props.onPause} >
+                <span className="header-item-content">Pause</span>
             </div>
         </div>;
     }

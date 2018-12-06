@@ -1,84 +1,77 @@
 import * as React from "react";
-import { TrainingComponent } from "./training";
+import { TrainingMode, SoundType } from "./training";
+import { Timer } from "./timer";
 
 export interface TrainingClockProps {
-    trainingMode: TrainingComponent;
+    initialTrainingMode: TrainingMode;
 };
 
 interface TrainingClockState {
-    timerId?: NodeJS.Timeout;
-    startMillis?: number;
-    currentMillis: number;
-    running: boolean;
+    seconds: number;
+    trainingMode: TrainingMode;
 }
 
-export class TrainingClock extends React.PureComponent<TrainingClockProps, TrainingClockState> {
+export class TrainingClock extends React.Component<TrainingClockProps, TrainingClockState> {
+
+    timer: Timer;
 
     constructor(props: TrainingClockProps) {
         super(props);
-        this.state = {
-            currentMillis: 0,
-            running: false
-        };
         this.tick = this.tick.bind(this);
-        this.start = this.start.bind(this);
-        this.stop = this.stop.bind(this);
-        this.pause = this.pause.bind(this);
+        this.timer = new Timer(this.tick);
+        this.state = {
+            seconds: 0,
+            trainingMode: props.initialTrainingMode
+        };
     }
 
-    private tick() {
-        this.forceUpdate();
+    private tick(lastTickMillis: number, currentTickMillis: number) {
+        const lastTickSeconds = Math.floor(lastTickMillis / 1000);
+        const currentTickSeconds = Math.floor(currentTickMillis / 1000);
+        const sound = this.state.trainingMode.shouldPlaySound(lastTickSeconds, currentTickSeconds);
+        if (sound != SoundType.none) {
+            alert(sound);
+        }
+        this.setState({
+            seconds: currentTickSeconds
+        });
+    }
+
+    public shouldComponentUpdate(nextProps: TrainingClockProps, nextState: TrainingClockState): boolean {
+        return this.state.seconds != nextState.seconds || this.state.trainingMode != nextState.trainingMode;
     }
 
     public start() {
-        const timerId = setInterval(this.tick, 1000);
-        const startTime = Date.now();
-        this.setState({
-            timerId: timerId,
-            startMillis: startTime,
-            running: true
-        });
-    }
-
-    public pause() {
-        const stopTime = Date.now();
-        this.setState((prevState: Readonly<TrainingClockState>) => {
-            return {
-                currentMillis: prevState.currentMillis + stopTime - prevState.startMillis,
-                running: false
-            };
-        }, () => {
-            if (this.state.timerId) {
-                clearInterval(this.state.timerId)
-            }
-        });
+        this.timer.start();
     }
 
     public stop() {
-        this.setState({ running: false }, () => {
-            if (this.state.timerId) {
-                clearInterval(this.state.timerId)
-            }
+        this.timer.stop();
+    }
+
+    public pause() {
+        this.timer.pause();
+    }
+
+    public reset() {
+        this.timer.stop();
+        this.timer = new Timer(this.tick);
+        this.setState({
+            seconds: 0
         });
     }
 
-    private getMillisecondsRunning(): number {
-        if (this.state.running) {
-            return this.state.currentMillis + (Date.now() - this.state.startMillis);
-        } else {
-            return this.state.currentMillis;
-        }
+    public setTrainingMode(mode: TrainingMode) {
+        this.timer.stop();
+        this.timer = new Timer(this.tick);
+        this.setState({
+            seconds: 0,
+            trainingMode: mode
+        });
     }
 
-    public componentDidMount() {
-    }
-
-    public componentWillUnmount() {
-        this.stop();
-    }
-
-    render() {
-        const Content = this.props.trainingMode;
-        return <Content time={this.getMillisecondsRunning()} />;
+    render(): React.ReactNode {
+        const TrainingModeComponent = this.state.trainingMode.render;
+        return <div className="clock"><TrainingModeComponent seconds={this.state.seconds}/></div>;
     }
 }
