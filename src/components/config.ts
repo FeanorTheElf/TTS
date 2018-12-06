@@ -1,7 +1,7 @@
 import { SoundType } from "./training";
 
 export interface Config {
-    soundUrls: {
+    soundUrls?: {
         [P in SoundType]?: string
     },
     backgroundImageUrl?: string

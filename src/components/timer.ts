@@ -49,12 +49,12 @@ export class Timer {
 
     private getMillisecondsRunning(): number {
         if (this.running && this.startMillis) {
-            return (this.currentMillis + (Date.now() - this.startMillis)) * 100;
+            return (this.currentMillis + (Date.now() - this.startMillis));
         } else {
             if (this.running) {
                 console.error("The timer is running, but startMillis is not set: " + this);
             }
-            return (this.currentMillis) * 10;
+            return (this.currentMillis);
         }
     }
 }
