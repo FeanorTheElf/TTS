@@ -18,8 +18,9 @@ function TrainingModeDropdown(props: { supportedModes: TrainingModeType[], activ
         <div className="dropdown">
 			{props.supportedModes.map((mode, index) => {
                 const primary = index == props.activeModeIndex ? " primary" : "";
-                if (props.onClick) {
-                    return <span key={mode} className={"dropdown-item" + primary} onClick={() => props.onClick(index)} > {mode}</span>;
+                const onClick = props.onClick;
+                if (onClick) {
+                    return <span key={mode} className={"dropdown-item" + primary} onClick={() => onClick(index)} > {mode}</span>;
                 } else {
                     return <span key={mode} className={"dropdown-item" + primary}> {mode}</span>;
                 }

@@ -14,7 +14,7 @@ export default class Main extends React.PureComponent<{}, MainState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            currentMode: "Stufenintervall"
+            currentMode: trainingModeTypes[0]
         }
 
         this.clockRef = React.createRef();
@@ -34,10 +34,12 @@ export default class Main extends React.PureComponent<{}, MainState> {
     }
     
     private onModeChosen(mode: TrainingModeType) {
-        this.clockRef.current.setTrainingMode(trainingModes[mode]);
-        this.setState({
-            currentMode: mode
-        });
+        if (this.clockRef.current) {
+            this.clockRef.current.setTrainingMode(trainingModes[mode]);
+            this.setState({
+                currentMode: mode
+            });
+        }
     }
 
     public render() {

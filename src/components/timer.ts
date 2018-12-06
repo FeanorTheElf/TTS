@@ -31,13 +31,15 @@ export class Timer {
     }
 
     public pause() {
-        if (this.running && this.timerId) {
+        if (this.running && this.timerId && this.startMillis) {
             this.currentMillis += Date.now() - this.startMillis;
 
             clearInterval(this.timerId);
             this.timerId = undefined;
             this.running = false;
             this.tick();
+        } else if (this.running) {
+            console.error("The timer is running, but timerId or startMillis is not set: " + this);
         }
     }
 
@@ -46,9 +48,12 @@ export class Timer {
     }
 
     private getMillisecondsRunning(): number {
-        if (this.running) {
-            return (this.currentMillis + (Date.now() - this.startMillis)) * 10;
+        if (this.running && this.startMillis) {
+            return (this.currentMillis + (Date.now() - this.startMillis)) * 100;
         } else {
+            if (this.running) {
+                console.error("The timer is running, but startMillis is not set: " + this);
+            }
             return (this.currentMillis) * 10;
         }
     }

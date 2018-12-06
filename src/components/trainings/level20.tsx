@@ -1,15 +1,15 @@
 import * as React from "react";
-import { TrainingMode, SoundType, toMinuteSecondString } from "../training";
+import { TrainingMode, SoundTypeValue, SoundType, toMinuteSecondString } from "../training";
 
 export default class Level20 {
 
     private static duration = 20 * 60;
 
-    public static shouldPlaySound(lastTickSeconds: number, currentTickSeconds: number): SoundType {
+    public static shouldPlaySound(lastTickSeconds: number, currentTickSeconds: number): SoundType | null {
         if (lastTickSeconds < Level20.duration && currentTickSeconds >= Level20.duration) {
-            return SoundType.finished;
+            return SoundTypeValue.finished;
         }
-        return SoundType.none;
+        return SoundTypeValue.none;
     }
 
     public static render(props: { seconds: number, children?: React.ReactChildren }): JSX.Element {

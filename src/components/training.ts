@@ -8,12 +8,18 @@ export function toMinuteSecondString(seconds: number): string {
     return Math.floor(seconds / 60) + ":" + (seconds % 60);
 }
 
-export enum SoundType {
-    none, continue, finished
+export type SoundType = "continue" | "finished";
+
+export const soundTypes: SoundType[] = ["continue", "finished"];
+
+export class SoundTypeValue {
+    static readonly none: SoundType | null = null;
+    static readonly continue: SoundType = "continue";
+    static readonly finished: SoundType = "finished";
 }
 
 export interface TrainingMode {
-    shouldPlaySound(lastTickSeconds: number, currentTickSeconds: number): SoundType;
+    shouldPlaySound(lastTickSeconds: number, currentTickSeconds: number): SoundType | null;
     render: React.SFC<{ seconds: number }>;
 }
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TrainingMode, SoundType, toMinuteSecondString } from "../training";
+import { TrainingMode, SoundType, SoundTypeValue, toMinuteSecondString } from "../training";
 
 export default class Level4x730 {
 
@@ -9,11 +9,12 @@ export default class Level4x730 {
         return Math.floor(seconds / Level4x730.stepDuration) + 1;
     }
 
-    public static shouldPlaySound(lastTickSeconds: number, currentTickSeconds: number): SoundType {
-        if (Level4x730.getStep(currentTickSeconds) != Level4x730.getStep(lastTickSeconds)) {
-            return Level4x730.getStep(currentTickSeconds) == 5 ? SoundType.finished : SoundType.continue;
+    public static shouldPlaySound(lastTickSeconds: number, currentTickSeconds: number): SoundType | null {
+        if (Level4x730.getStep(currentTickSeconds) != Level4x730.getStep(lastTickSeconds) &&
+                Level4x730.getStep(currentTickSeconds) <= 5) {
+            return Level4x730.getStep(currentTickSeconds) == 5 ? SoundTypeValue.finished : SoundTypeValue.continue;
         }
-        return SoundType.none;
+        return SoundTypeValue.none;
     }
 
     public static render(props: { seconds: number, children?: React.ReactChildren }): JSX.Element {

@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import { TrainingMode, SoundType, toMinuteSecondString } from "../training";
+import { TrainingMode, SoundType, SoundTypeValue, toMinuteSecondString } from "../training";
 
 enum IntervalType {
     pause, training
@@ -25,15 +25,16 @@ export default class Level3x8x30 {
         return Math.floor(seconds / Level3x8x30.exerciseDuration) + 1;
     }
 
-    public static shouldPlaySound(lastTickSeconds: number, currentTickSeconds: number): SoundType {
+    public static shouldPlaySound(lastTickSeconds: number, currentTickSeconds: number): SoundType | null {
         if (Level3x8x30.getExercise(currentTickSeconds) == 4 && Level3x8x30.getExercise(lastTickSeconds) < 4)
-            return SoundType.finished;
-        else if (Level3x8x30.getIntervalType(lastTickSeconds) != Level3x8x30.getIntervalType(currentTickSeconds) ||
-            Level3x8x30.getStep(lastTickSeconds) != Level3x8x30.getStep(currentTickSeconds) ||
-            Level3x8x30.getExercise(lastTickSeconds) != Level3x8x30.getExercise(currentTickSeconds)) {
-            return SoundType.continue;
+            return SoundTypeValue.finished;
+        else if ((Level3x8x30.getIntervalType(lastTickSeconds) != Level3x8x30.getIntervalType(currentTickSeconds) ||
+                Level3x8x30.getStep(lastTickSeconds) != Level3x8x30.getStep(currentTickSeconds) ||
+                Level3x8x30.getExercise(lastTickSeconds) != Level3x8x30.getExercise(currentTickSeconds)) &&
+                currentTickSeconds < 3 * Level3x8x30.exerciseDuration) {
+            return SoundTypeValue.continue;
         } else {
-            return SoundType.none;
+            return SoundTypeValue.none;
         }
     }
 

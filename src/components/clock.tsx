@@ -1,6 +1,7 @@
 import * as React from "react";
-import { TrainingMode, SoundType } from "./training";
+import { TrainingMode, SoundType, SoundTypeValue } from "./training";
 import { Timer } from "./timer";
+import { AudioManager } from "./audio";
 
 export interface TrainingClockProps {
     initialTrainingMode: TrainingMode;
@@ -13,12 +14,14 @@ interface TrainingClockState {
 
 export class TrainingClock extends React.Component<TrainingClockProps, TrainingClockState> {
 
-    timer: Timer;
+    private timer: Timer;
+    private audioManager: AudioManager;
 
     constructor(props: TrainingClockProps) {
         super(props);
         this.tick = this.tick.bind(this);
         this.timer = new Timer(this.tick);
+        this.audioManager = new AudioManager();
         this.state = {
             seconds: 0,
             trainingMode: props.initialTrainingMode
@@ -29,8 +32,8 @@ export class TrainingClock extends React.Component<TrainingClockProps, TrainingC
         const lastTickSeconds = Math.floor(lastTickMillis / 1000);
         const currentTickSeconds = Math.floor(currentTickMillis / 1000);
         const sound = this.state.trainingMode.shouldPlaySound(lastTickSeconds, currentTickSeconds);
-        if (sound != SoundType.none) {
-            alert(sound);
+        if (sound) {
+            this.audioManager.play(sound);
         }
         this.setState({
             seconds: currentTickSeconds
