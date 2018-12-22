@@ -69,12 +69,34 @@
             font-size: 50px;
         }
 
+        .text-done {
+            font-style: italic;
+        }
+
         .secondary {
             color: darkgrey;
         }
 
         @media only screen and (max-width: 320px) and (orientation: portrait) {
             .secondary {
+                display: none;
+            }
+        }
+
+        @media only screen and (max-width: 420px) (orientation: portrait) {
+            .secondary-long {
+                display: none;
+            }
+        }
+
+        @media only screen and (min-width: 421px) {
+            .secondary-short {
+                display: none;
+            }
+        }
+
+        @media only screen and (orientation: landscape) {
+            .secondary-short {
                 display: none;
             }
         }
@@ -88,10 +110,10 @@
     </script>
 
     <!-- Dependencies -->
-    <script src="./react.production.min.js"></script>
-    <script src="./react-dom.production.min.js"></script>
+    <script src="react.production.min.js"></script>
+    <script src="react-dom.production.min.js"></script>
 
     <!-- Main -->
-    <script src="./bundle.js"></script>
+    <script src="bundle.js"></script>
 </body>
 </html>

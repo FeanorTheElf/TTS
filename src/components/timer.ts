@@ -1,3 +1,4 @@
+const timeScale = 1
 
 export class Timer {
 
@@ -18,7 +19,6 @@ export class Timer {
 
     private tick() {
         const runningMillis = this.getMillisecondsRunning();
-        console.log(runningMillis + ", " + this.millisOnLastTick);
         this.callback(this.millisOnLastTick, runningMillis);
         this.millisOnLastTick = runningMillis;
     }
@@ -33,7 +33,7 @@ export class Timer {
 
     public pause() {
         if (this.running && this.timerId && this.startMillis) {
-            this.currentMillis += Date.now() - this.startMillis;
+            this.currentMillis += (Date.now() - this.startMillis) * timeScale;
 
             clearInterval(this.timerId);
             this.timerId = undefined;
@@ -50,12 +50,12 @@ export class Timer {
 
     private getMillisecondsRunning(): number {
         if (this.running && this.startMillis) {
-            return (this.currentMillis + (Date.now() - this.startMillis)) * 50;
+            return (this.currentMillis + (Date.now() - this.startMillis) * timeScale);
         } else {
             if (this.running) {
                 console.error("The timer is running, but startMillis is not set: " + this);
             }
-            return (this.currentMillis) * 50;
+            return (this.currentMillis);
         }
     }
 }
