@@ -13,8 +13,8 @@ export class AudioManager {
 
     constructor() {
         this.sounds = {
-            continue: new Audio((currentConfig && currentConfig.soundUrls && currentConfig.soundUrls.continue) || "continue.wav"),
-            finished: new Audio((currentConfig && currentConfig.soundUrls && currentConfig.soundUrls.finished) || "finished.wav")
+            continue: new Audio((currentConfig && currentConfig.soundUrls && currentConfig.soundUrls.continue) || "continue.mp3"),
+            finished: new Audio((currentConfig && currentConfig.soundUrls && currentConfig.soundUrls.finished) || "finished.mp3")
         };
         soundTypes.forEach(type => this.sounds[type].load());
     }
