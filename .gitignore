@@ -1,4 +1,4 @@
-﻿dist
+﻿.vs
+dist
 node_modules
-.vs
 export
