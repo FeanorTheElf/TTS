@@ -2,7 +2,7 @@ const timeScale = 1
 
 export class Timer {
 
-    private timerId?: NodeJS.Timeout;
+    private timerId?: number;
     private startMillis?: number;
     private currentMillis: number;
     private running: boolean;
